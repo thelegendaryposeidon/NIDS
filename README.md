@@ -1,8 +1,9 @@
 # Real-time Intrusion Detection Web App
-<b>Project CN</b><br>
-<b>Saksham Deshmukh - 202404013
-   Vrishty Gothwal - 202404017
-   Ayush Hegde - 202404019</b><br>
+<b>[CN Project]</b><br>
+<b> 
+   - Saksham Deshmukh - 202404013
+   - Vrishty Gothwal - 202404017
+   - Ayush Hegde - 202404019</b><br>
 ## About
 * Real-time Intrusion Detection System implementing Machine Learning. 
 
