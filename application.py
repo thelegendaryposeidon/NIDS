@@ -407,14 +407,35 @@ def flow_detail():
     # og_n_largest = X[ind_n_abs_largest]
     err_n_largest = err[0][ind_n_abs_largest]
     plot_div = plotly.offline.plot({
-    "data": [
-        plotly.graph_objs.Bar(x=col_n_largest[0].tolist(),y=err_n_largest[0].tolist())
-    ]
+        "data": [
+            plotly.graph_objs.Bar(
+                x=col_n_largest[0].tolist(),
+                y=err_n_largest[0].tolist(),
+                marker=dict(
+                    color='rgba(99, 102, 241, 0.85)',
+                    line=dict(color='rgba(56, 189, 248, 1)', width=1.5)
+                )
+            )
+        ],
+        "layout": plotly.graph_objs.Layout(
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#94a3b8', family='Inter, sans-serif'),
+            xaxis=dict(
+                gridcolor='rgba(255,255,255,0.05)',
+                tickfont=dict(family='JetBrains Mono, monospace', size=11)
+            ),
+            yaxis=dict(
+                gridcolor='rgba(255,255,255,0.05)',
+                title='Reconstruction Error (Residual)',
+                tickfont=dict(family='JetBrains Mono, monospace', size=11)
+            ),
+            margin=dict(l=40, r=20, t=20, b=60),
+            height=320
+        )
     }, include_plotlyjs=False, output_type='div')
 
-    # return render_template('detail.html',  tables=[flow.to_html(classes='data')], titles=flow.columns.values, explain = exp.as_html())
-
-    return render_template('detail.html', tables=[flow.reset_index(drop=True).transpose().to_html(classes='data')], exp=exp.as_html(), ae_plot = plot_div, risk = risk) # titles=flow.columns.values, classifier='RF Classifier'
+    return render_template('detail.html', tables=[flow.reset_index(drop=True).transpose().to_html(classes='feature-spec-table table-bordered')], exp=exp.as_html(), ae_plot = plot_div, risk = risk, flow_id=flow_id)
 
 # @app.route('/flow-detail')
 # def flow_detail():

@@ -1,51 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Content-Type" content="text/html;charset=utf8">
-    <meta name="viewport" content="width=device-width, user-scalable=no">
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AIoT Real-Time Network Intrusion Detection System Dashboard">
+    <title>AIoT NIDS - Real-Time Threat Operations Center</title>
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Legacy Thirdparty CSS (For Flag Sprites) -->
     <link rel="stylesheet" type="text/css" href="static/css/thirdparty.min.css">
-    <link rel="stylesheet" type="text/css" href="static/css/main.css">
-    <link rel="stylesheet" type="text/css" href="static/css/media.css">
+    
+    <!-- Modern Dashboard Theme -->
+    <link rel="stylesheet" type="text/css" href="static/css/dashboard.css">
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-
-    <script src="static/js/application.js"></script>
-
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- JS Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 </head>
 <body>
-<div class="container">
-  <div class="jumbotron">
-    <h1>APT Detection System</h1>
-    <p>By Saksham Deshmukh, Vrishty Gothwal, Ayush Hegde</p>
-  </div>
+
+<div class="dashboard-container">
+    <!-- Top Navbar -->
+    <header class="top-navbar">
+        <div class="brand-section">
+            <div class="brand-icon-wrapper">
+                <i class="fa-solid fa-shield-halved" style="font-size: 1.4rem; color: #fff;"></i>
+            </div>
+            <div class="brand-titles">
+                <h1>
+                    AIoT Network Intrusion Detection System
+                    <span class="badge-nids">XAI + Autoencoder</span>
+                </h1>
+                <p class="authors">By Saksham Deshmukh, Vrishty Gothwal, Ayush Hegde</p>
+            </div>
+        </div>
+
+        <div class="status-section">
+            <div class="live-indicator">
+                <span class="pulse-dot"></span>
+                <span>Live Sniffing</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- KPI Metrics Ribbon -->
+    <section class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-icon icon-blue">
+                <i class="fa-solid fa-network-wired"></i>
+            </div>
+            <div class="kpi-content">
+                <span class="kpi-label">Total Flows</span>
+                <span class="kpi-value" id="kpi-total">0</span>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon icon-green">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="kpi-content">
+                <span class="kpi-label">Normal / Benign</span>
+                <span class="kpi-value" id="kpi-benign">0</span>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon icon-red">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="kpi-content">
+                <span class="kpi-label">Threats Detected</span>
+                <span class="kpi-value" id="kpi-threats">0</span>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon icon-purple">
+                <i class="fa-solid fa-cubes-stacked"></i>
+            </div>
+            <div class="kpi-content">
+                <span class="kpi-label">Active Processes</span>
+                <span class="kpi-value" id="kpi-apps">0</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+        <!-- Live Traffic Telemetry Chart -->
+        <section class="content-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    <span>Source IP Traffic Distribution</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Flow Stream Table -->
+        <section class="content-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Real-Time Flow Telemetry & Threat Analysis</span>
+                </div>
+                <div class="card-actions">
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="flow-search" class="search-input" placeholder="Filter by IP, Port, App, Attack...">
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="modern-table" id="details-table">
+                    <thead>
+                        <tr>
+                            <th>Flow ID</th>
+                            <th>Source</th>
+                            <th>Destination</th>
+                            <th>Proto</th>
+                            <th>Timestamp</th>
+                            <th>Application (PID)</th>
+                            <th>Prediction</th>
+                            <th>Confidence</th>
+                            <th>Risk Level</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="details-body">
+                        <tr>
+                            <td colspan="10" class="empty-table-state">
+                                <i class="fa-solid fa-satellite-dish"></i>
+                                <p>Awaiting captured network flows... Generate traffic in your browser or terminal.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 </div>
-    
 
-
-<div class="container" id="content">
-    <canvas width = 60 height = 20 id="myChart"></canvas>
-    <div class="row">
-        <p>Captured flow info here:</p>
-        <h3>Captured flow:</h3>
-        <div id="log">
-        <table width="100%" border="1" cellpadding="2" cellspacing="0" class="display compact" id="details">
-        </table>
-        </div> <!-- /#log -->
-    </div>
-</div>
-<noscript>
-  <div id="noscript">
-      Javascript is disabled in your browser. You must have Javascript enabled to utilize the functionality of this page.
-  </div>
-</noscript>
-
+<!-- Frontend Controller Script -->
+<script src="static/js/application.js"></script>
 
 </body>
 </html>

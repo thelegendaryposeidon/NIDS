@@ -1,79 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Content-Type" content="text/html;charset=utf8">
-    <meta name="viewport" content="width=device-width, user-scalable=no">
-    <meta name="robots" content="noindex, nofollow">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow #{{ flow_id }} - Deep Threat & XAI Telemetry</title>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script> -->
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script> -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
-    <!-- <script src="static/js/application.js"></script> -->
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <link rel="stylesheet" type="text/css" href="static/css/thirdparty.min.css">
-    <link rel="stylesheet" type="text/css" href="static/css/main.css">
-    <link rel="stylesheet" type="text/css" href="static/css/media.css">
+    <!-- Modern Dashboard Theme -->
+    <link rel="stylesheet" type="text/css" href="static/css/dashboard.css">
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- JS Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <style>
+        /* Specific Detail View Overrides */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        
+        .lime-container {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        .lime-container svg text {
+            fill: #94a3b8 !important;
+            font-family: var(--font-sans) !important;
+        }
+
+        .lime-container table {
+            color: var(--text-primary) !important;
+        }
+
+        .feature-spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-mono);
+            font-size: 0.83rem;
+        }
+
+        .feature-spec-table th,
+        .feature-spec-table td {
+            padding: 10px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .feature-spec-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .feature-spec-table th {
+            color: var(--accent-blue);
+            width: 30%;
+            background: rgba(15, 23, 42, 0.6);
+            font-weight: 600;
+        }
+
+        .feature-spec-table td {
+            color: #f8fafc;
+        }
+
+        .risk-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <div class="jumbotron">
-    <h1>APT Detection System</h1>
-    <p>By Saksham Deshmukh, Vrishty Gothwal, Ayush Hegde</p>
-  </div>
-</div>
 
-<div class="container">
-  <b>
-  <h3 align="center">
-  {{ risk|safe }}
-  </h3>
-  </b>
-</div>
-<hr>
+<div class="dashboard-container">
+    <!-- Hero Detail Header -->
+    <section class="detail-hero">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <a href="/" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Live Monitor</span>
+            </a>
+            <div>
+                <h1 style="font-size: 1.4rem; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-microchip" style="color: var(--accent-blue);"></i>
+                    Flow Deep Inspection #{{ flow_id }}
+                </h1>
+                <p style="font-size: 0.82rem; color: var(--text-secondary);">
+                    AIoT Network Telemetry, Explainable AI Feature Attribution & Autoencoder Anomaly Scoring
+                </p>
+            </div>
+        </div>
 
-{% if exp %}
-  <!-- <h3 align="center">LIME-explained results using {#{ classifier }#}</h3> -->
-  <h3 align="center">LIME-explained results using Random Forest Classifier (Top-6 values):</h3>
-  <div class="container">
-      {{ exp|safe }}
-  </div>
-{% endif %}
-<hr>
-<br></br>
+        <div>
+            <div class="risk-hero-badge">
+                {{ risk|safe }}
+            </div>
+        </div>
+    </section>
 
-<h3 align="center">Ranking features by reconstruct error by Auto Encoder:</h3>
-<div class="container">
-  {{ ae_plot|safe }}
-</div>
-<hr>
-<br></br>
+    <!-- Detail Inspection Sections -->
+    <main class="detail-grid">
+        <!-- 1. Explainable AI (LIME) Section -->
+        {% if exp %}
+        <section class="content-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>Explainable AI (LIME) - Feature Decision Weights</span>
+                </div>
+                <span class="pid-tag">Random Forest Model</span>
+            </div>
+            <div class="card-body">
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px;">
+                    Local Interpretable Model-agnostic Explanations (LIME) highlights which statistical packet features most influenced the classification decision for this flow:
+                </p>
+                <div class="lime-container">
+                    {{ exp|safe }}
+                </div>
+            </div>
+        </section>
+        {% endif %}
 
-<h3 align="center">List of all features and values used:
-<div class="container">
-  <!-- <div class="panel-body table-responsive"> -->
-    <table class="table2 table-bordered" >
-      {% for table in tables %}
-      <tr>
-        <!-- <td>{#{titles[loop.index]}#}</td> -->
-        <td>{{ table|safe }}</td>
-      </tr>
-      {% endfor %}
+        <!-- 2. Autoencoder Reconstruction Loss Section -->
+        <section class="content-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fa-solid fa-chart-column"></i>
+                    <span>Autoencoder Anomaly Reconstruction Error</span>
+                </div>
+                <span class="pid-tag">Deep Autoencoder Residuals</span>
+            </div>
+            <div class="card-body">
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px;">
+                    Top-5 features with highest reconstruction discrepancy ($|X - \hat{X}|$). Unusually high reconstruction residuals indicate behavioral anomaly deviating from baseline network traffic:
+                </p>
+                <div style="background: rgba(15, 23, 42, 0.6); border-radius: var(--radius-md); padding: 12px; border: 1px solid var(--border-subtle);">
+                    {{ ae_plot|safe }}
+                </div>
+            </div>
+        </section>
 
-    </table>
-</div>
-</h3>
-  <!-- </div> -->
-
+        <!-- 3. Complete Flow Feature Specification Table -->
+        <section class="content-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fa-solid fa-table-list"></i>
+                    <span>Flow Metadata & 39-Feature Specification</span>
+                </div>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div class="table-responsive">
+                    {% for table in tables %}
+                        {{ table|safe }}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
 </div>
 
 </body>
-
-
 </html>
-
